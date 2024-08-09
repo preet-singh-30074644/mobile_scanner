@@ -186,12 +186,10 @@ class MobileScanner(
             val imageWidth = inputImage.height
             val imageHeight = inputImage.width
 
-            val left = (scanWindow[0] * imageWidth).roundToInt()
-            val top = (scanWindow[1] * imageHeight).roundToInt()
-            val right = (scanWindow[2] * imageWidth).roundToInt()
-            val bottom = (scanWindow[3] * imageHeight).roundToInt()
-
-            val scaledScanWindow = Rect(left, top, right, bottom)
+            val left = ((if(scanWindow[0].isNaN()) 0f else scanWindow[0])*imageWidth).roundToInt()
+            val top = ((if(scanWindow[1].isNaN()) 0f else scanWindow[1])*imageHeight).roundToInt()
+            val right =((if(scanWindow[2].isNaN()) 0f else scanWindow[2])*imageWidth).roundToInt()
+            val bottom = ((if(scanWindow[3].isNaN()) 0f else scanWindow[3])*imageHeight).roundToInt()
 
             return scaledScanWindow.contains(barcodeBoundingBox)
         } catch (exception: IllegalArgumentException) {
