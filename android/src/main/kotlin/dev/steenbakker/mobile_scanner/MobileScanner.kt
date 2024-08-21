@@ -170,17 +170,24 @@ class MobileScanner(
         inputImage: ImageProxy
     ): Boolean {
         val barcodeBoundingBox = barcode.boundingBox ?: return false
-
-        val imageWidth = inputImage.height
-        val imageHeight = inputImage.width
-
-        val left = (scanWindow[0] * imageWidth).roundToInt()
-        val top = (scanWindow[1] * imageHeight).roundToInt()
-        val right = (scanWindow[2] * imageWidth).roundToInt()
-        val bottom = (scanWindow[3] * imageHeight).roundToInt()
-
-        val scaledScanWindow = Rect(left, top, right, bottom)
-        return scaledScanWindow.contains(barcodeBoundingBox)
+ 
+        try {
+            val imageWidth = inputImage.height
+            val imageHeight = inputImage.width
+ 
+            val left = (scanWindow[0] * imageWidth).roundToInt()
+            val top = (scanWindow[1] * imageHeight).roundToInt()
+            val right = (scanWindow[2] * imageWidth).roundToInt()
+            val bottom = (scanWindow[3] * imageHeight).roundToInt()
+ 
+            val scaledScanWindow = Rect(left, top, right, bottom)
+ 
+            return scaledScanWindow.contains(barcodeBoundingBox)
+        } catch (exception: IllegalArgumentException) {
+            // Rounding of the scan window dimensions can fail, due to encountering NaN.
+            // If we get NaN, rather than give a false positive, just return false.
+            return false
+        }
     }
 
     // Return the best resolution for the actual device orientation.
